@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+
+<html lang="en" class="relative ou4zs light">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+
+  <meta name="robots" content="max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description"
+    content="SynergySphere - Advanced Team Collaboration Platform for project management and team coordination. Built by Team Navchetna for Odoo Hackathon.">
+  <meta name="keywords" content="project management, team collaboration, odoo hackathon, navchetna, synergysphere">
+  <meta name="author" content="Team Navchetna">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="SynergySphere - Advanced Team Collaboration Platform">
+  <meta name="twitter:description"
+    content="Advanced project management and team collaboration platform built for modern teams.">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="SynergySphere">
+  <meta property="og:title" content="SynergySphere - Advanced Team Collaboration Platform">
+  <meta property="og:description"
+    content="Advanced project management and team collaboration platform built for modern teams.">
+
+  <!-- Title -->
+  <title>SynergySphere - Advanced Team Collaboration Platform</title>
+
+  <!-- Favicon -->
+  <link rel="shortcut icon" href="./files/logo.svg" type="image/svg+xml">
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/loader.min.js"></script>
+    
+    <!-- Phosphor icons -->
+    <script src="https://unpkg.com/phosphor-icons@2.0.8/src/index.js"></script>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root{
+            --bg:#000000;
+            --panel:rgba(15,15,15,0.85);
+            --panel-2:rgba(20,20,20,0.9);
+            --edge:rgba(60,60,60,0.3);
+            --muted:#666666;
+            --accent:#0078d4;
+            --purple:#6b46c1;
+            --code-bg:rgba(8,8,8,0.95);
+            --file-active:rgba(0,120,212,0.2);
+            --true:#10b981;
+            --text:#f8fafc;
+            --glass:rgba(255,255,255,0.05);
+            --glass-border:rgba(255,255,255,0.1);
+        }
+        
+        [data-theme="light"]{
+            --bg:#ffffff;
+            --panel:rgba(248,250,252,0.95);
+            --panel-2:rgba(241,245,249,0.95);
+            --edge:rgba(203,213,225,0.8);
+            --muted:#64748b;
+            --accent:#0078d4;
+            --purple:#6b46c1;
+            --code-bg:rgba(255,255,255,0.98);
+            --file-active:rgba(0,120,212,0.15);
+            --true:#059669;
+            --text:#1e293b;
+            --glass:rgba(0,0,0,0.08);
+            --glass-border:rgba(0,0,0,0.15);
+        }
+
+        *{box-sizing:border-box;margin:0;padding:0}
+        html,body{height:100%}
+        body{
+            height:100vh;
+            background:var(--bg);
+            color:var(--text);
+            font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+            overflow:hidden;
+            -webkit-font-smoothing:antialiased;
+        }
+
+        .browser-frame{height:100vh;display:flex;flex-direction:column;}
+        .browser-header{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            padding:8px 16px;
+            background:var(--panel-2);
+            backdrop-filter:blur(20px);
+            -webkit-backdrop-filter:blur(20px);
+            border-bottom:1px solid var(--glass-border);
+            gap:12px;
+            position:relative;
+            z-index:100;
+        }
+
+        .folder-name{
+            font-family:'JetBrains Mono',monospace;
+            font-size:13px;
+            color:var(--text);
+            cursor:pointer;
+            padding:4px 8px;
+            border-radius:4px;
+            transition:background 0.2s;
+        }
+        .folder-name:hover{background:var(--glass)}
+
+        .browser-nav{display:flex;align-items:center;gap:12px;margin-left:8px}
+        .nav-arrow{color:var(--muted);font-size:14px;cursor:pointer}
+        .nav-title{font-weight:600;color:var(--text);letter-spacing:.2px}
+
+        .url-bar{
+            display:flex;align-items:center;gap:10px;
+            background:var(--glass);border:1px solid var(--glass-border);
+            border-radius:8px;padding:7px 12px;
+            margin:0 28px;flex:1;max-width:520px;
+            backdrop-filter:blur(10px);
+            -webkit-backdrop-filter:blur(10px);
+        }
+        .url-bar i{color:var(--muted);font-size:14px}
+        .url-text{font-size:13px;color:var(--text);opacity:.95}
+        .browser-actions{display:flex;align-items:center;gap:14px}
+        .browser-actions i{color:var(--muted);font-size:15px;cursor:pointer}
+
+        .profile-avatar{
+            width:26px;height:26px;border-radius:50%;
+            background:linear-gradient(180deg,#0a7bd6,#0066b3);
+            cursor:pointer;position:relative;
+            overflow:hidden;
+            z-index:100; /* Add this line */
+        }
+        .profile-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;pointer-events:none}
+        
+        .dropdown{
+            position:fixed; /* Change from absolute to fixed */
+            top:50px; /* Change this from calc(100% + 8px) */
+            right:16px;
+            background:var(--panel);
+            border:1px solid var(--glass-border);
+            border-radius:8px;
+            padding:8px 0;
+            min-width:200px;
+            backdrop-filter:blur(20px);
+            -webkit-backdrop-filter:blur(20px);
+            z-index:99999;
+            display:none;
+            box-shadow:0 8px 32px rgba(0,0,0,0.3);
+            opacity:0;  /* Add this line */
+            transform:translateY(-10px);  /* Add this line */
+            transition:opacity 0.2s, transform 0.2s;  /* Add this line */
+        }
+        .dropdown.show{
+            display:block !important;
+            opacity:1;  /* Add this line */
+            transform:translateY(0);  /* Add this line */
+        }
+        .dropdown-item{padding:10px 16px;cursor:pointer;display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text)}
+        .dropdown-item:hover{background:var(--glass)}
+        .dropdown-divider{height:1px;background:var(--edge);margin:4px 0}
+        .theme-switch{display:flex;align-items:center;justify-content:space-between;width:100%}
+        .switch{position:relative;width:40px;height:20px;background:var(--edge);border-radius:20px;cursor:pointer;transition:background 0.3s}
+        .switch.active{background:var(--accent)}
+        .switch-thumb{position:absolute;top:2px;left:2px;width:16px;height:16px;background:#fff;border-radius:50%;transition:transform 0.3s;box-shadow:0 2px 4px rgba(0,0,0,0.2)}
+        .switch.active .switch-thumb{transform:translateX(20px)}
+
+        .editor-interface{display:flex;flex:1;min-height:0}
+
+        .sidebar{
+            width:240px;background:var(--panel);
+            backdrop-filter:blur(20px);
+            -webkit-backdrop-filter:blur(20px);
+            border-right:1px solid var(--glass-border);
+            display:flex;flex-direction:column;min-height:0;
+        }
+        .search-section{padding:12px;border-bottom:1px solid var(--edge)}
+        .search-container{position:relative}
+        .search-container i{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:13px}
+        .search-input{
+            width:100%;padding:8px 10px 8px 34px;border-radius:6px;
+            border:1px solid var(--glass-border);
+            background:var(--glass);color:var(--text);font-size:13px;outline:none;
+            backdrop-filter:blur(10px);
+            -webkit-backdrop-filter:blur(10px);
+        }
+
+        .section-header{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-bottom:1px solid var(--edge)}
+        .section-title{font-size:11px;color:var(--text);font-weight:700;letter-spacing:.6px;text-transform:uppercase;opacity:0.8}
+        .section-actions i{color:var(--muted);margin-left:6px;cursor:pointer}
+        .file-item{display:flex;align-items:center;padding:6px 12px;color:var(--text);font-size:13px;cursor:pointer;gap:8px;position:relative;opacity:0.9;transition:all 0.2s}
+        .file-item i{font-size:16px;transition:transform 0.2s}
+        .file-item:hover{background:var(--glass)}
+        .file-item.active{background:var(--file-active);color:var(--text);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+        .file-item.folder{}
+        .file-item.folder.expanded .folder-icon{transform:rotate(90deg)}
+
+        .file-explorer{flex:1;overflow:auto;padding:4px 0}
+
+        .main-content{flex:1;display:flex;flex-direction:column;min-width:0;min-height:0}
+
+        .tab-bar{display:flex;align-items:center;background:var(--panel-2);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--glass-border);padding-left:8px;min-height:40px;overflow-x:auto;overflow-y:hidden}
+        #tab-container{display:flex;align-items:center;flex-shrink:0}
+        .tab{display:flex;align-items:center;padding:8px 16px;background:var(--glass);border-right:1px solid var(--glass-border);color:var(--text);font-size:13px;cursor:pointer;gap:8px;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);opacity:0.9;min-height:40px;white-space:nowrap;flex-shrink:0}
+        .tab.active{background:var(--code-bg);color:var(--text);border-bottom:2px solid var(--accent);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+        .tab i:first-child{color:#569cd6;font-size:14px}
+        .tab i:last-child{color:var(--muted);font-size:12px;margin-left:8px;opacity:0.7}
+        .tab i:last-child:hover{opacity:1}
+
+
+        .editor-container{display:flex;flex:1;min-height:0}
+        .editor-main{flex:1;display:flex;flex-direction:column;min-width:0;min-height:0}
+
+        .editor-workspace{flex:1;display:flex;min-height:0;overflow:hidden;position:relative}
+        .monaco-editor-container{flex:1;min-height:0}
+        .image-preview{flex:1;display:flex;align-items:center;justify-content:center;background:var(--code-bg);padding:20px}
+        .image-preview img{max-width:100%;max-height:100%;object-fit:contain;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,0.2)}
+
+        .welcome-screen{
+            flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+            background:var(--code-bg);color:var(--muted);font-size:16px;gap:12px
+        }
+        .welcome-screen i{font-size:64px;opacity:0.5}
+        .welcome-screen p{text-align:center;max-width:400px;line-height:1.5}
+
+        .terminal{height:200px;background:var(--panel);border-top:1px solid var(--edge);display:flex;flex-direction:column;min-height:0;resize:vertical;overflow:hidden;min-height:100px;max-height:60vh}
+        .terminal.collapsed{height:32px;min-height:32px;max-height:32px;resize:none}
+        .terminal-resize-handle{height:4px;background:var(--edge);cursor:ns-resize;border-top:1px solid var(--glass-border)}
+        .terminal-tabs{display:flex;background:var(--panel-2);border-bottom:1px solid var(--edge);align-items:center;padding-left:8px}
+        .terminal-tab{display:flex;align-items:center;padding:8px 12px;color:var(--text);border-right:1px solid var(--edge);font-size:13px;cursor:pointer;opacity:0.9}
+        .terminal-tab.active{background:var(--panel);color:var(--text)}
+        .terminal-info{margin-left:auto;padding-right:12px;display:flex;gap:16px;align-items:center;color:var(--muted);font-size:12px}
+        .terminal-controls{display:flex;align-items:center;gap:8px;margin-left:8px}
+        .terminal-control{color:var(--muted);font-size:12px;cursor:pointer;padding:4px}
+        .terminal-control:hover{color:var(--text)}
+        .terminal-content{flex:1;padding:12px;overflow:auto}
+        .terminal.collapsed .terminal-content{display:none}
+        .terminal-header{display:flex;align-items:center;color:var(--muted);gap:8px;margin-bottom:10px;font-size:13px}
+        .terminal-output{font-family:'JetBrains Mono',monospace;font-size:13px;line-height:18px;white-space:pre-wrap}
+        .output-true{color:var(--true);font-weight:600}
+        .output-false{color:var(--text)}
+
+        .folder-select-btn{
+            display:flex;align-items:center;gap:8px;
+            background:var(--glass);border:1px solid var(--glass-border);border-radius:6px;
+            padding:10px 12px;color:var(--text);font-size:13px;cursor:pointer;
+            margin:8px 12px 12px;transition:all 0.2s
+        }
+        .folder-select-btn:hover{background:var(--file-active)}
+
+        .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:10000;display:none;align-items:center;justify-content:center}
+        .modal{background:var(--panel);border:1px solid var(--glass-border);border-radius:12px;padding:24px;min-width:400px;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:0 16px 64px rgba(0,0,0,0.5)}
+        .modal-title{font-size:16px;font-weight:600;margin-bottom:12px;color:var(--text)}
+        .modal-message{font-size:14px;color:var(--muted);margin-bottom:20px;line-height:1.5}
+        .modal-actions{display:flex;gap:12px;justify-content:flex-end}
+        .modal-btn{padding:8px 16px;border-radius:6px;font-size:13px;cursor:pointer;border:none;transition:all 0.2s}
+        .modal-btn-primary{background:var(--accent);color:#fff}
+        .modal-btn-primary:hover{filter:brightness(1.1)}
+        .modal-btn-secondary{background:var(--glass);color:var(--text);border:1px solid var(--glass-border)}
+        .modal-btn-secondary:hover{background:var(--file-active)}
+
+        ::-webkit-scrollbar{width:8px;height:8px}
+        ::-webkit-scrollbar-track{background:var(--code-bg)}
+        ::-webkit-scrollbar-thumb{background:#464647;border-radius:4px}
+        ::-webkit-scrollbar-thumb:hover{background:#686868}
+
+        @media (max-width:1100px){
+            .sidebar{width:200px}
+            .url-bar{max-width:300px;margin:0 12px}
+        }
+    </style>
+</head>
+<body>
+    <div class="browser-frame">
+        <div class="browser-header">
+            <div style="display:flex;align-items:center;gap:12px">
+  
+  <div class="nav-title">SynergySphere</div>
+    
+              
+                              <div class="folder-name">No repository selected</div>
+            </div>
+
+            <div class="url-bar">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#666666" viewBox="0 0 256 256"><path d="M245,110.64A16,16,0,0,0,232,104H216V88a16,16,0,0,0-16-16H130.67L102.94,51.2a16.14,16.14,0,0,0-9.6-3.2H40A16,16,0,0,0,24,64V208h0a8,8,0,0,0,8,8H211.1a8,8,0,0,0,7.59-5.47l28.49-85.47A16.05,16.05,0,0,0,245,110.64ZM93.34,64,123.2,86.4A8,8,0,0,0,128,88h72v16H69.77a16,16,0,0,0-15.18,10.94L40,158.7V64Zm112,136H43.1l26.67-80H232Z"></path></svg>
+                <span class="url-text" id="current-path">No repository selected</span>
+            </div>
+
+            <div class="browser-actions">
+
+            <div class="browser-nav">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#666666" viewBox="0 0 256 256" class="nav-arrow"><path d="M232,184a8,8,0,0,1-16,0A88,88,0,0,0,65.78,121.78L43.4,144H88a8,8,0,0,1,0,16H24a8,8,0,0,1-8-8V88a8,8,0,0,1,16,0v44.77l22.48-22.33A104,104,0,0,1,232,184Z"></path></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#666666" viewBox="0 0 256 256" class="nav-arrow"><path d="M240,88v64a8,8,0,0,1-8,8H168a8,8,0,0,1,0-16h44.6l-22.36-22.21A88,88,0,0,0,40,184a8,8,0,0,1-16,0,104,104,0,0,1,177.54-73.54L224,132.77V88a8,8,0,0,1,16,0Z"></path></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#666666" viewBox="0 0 256 256" class="nav-arrow" id="terminal-nav-toggle" title="Toggle Terminal"><path d="M128,128a8,8,0,0,1-3,6.25l-40,32a8,8,0,1,1-10-12.5L107.19,128,75,102.25a8,8,0,1,1,10-12.5l40,32A8,8,0,0,1,128,128Zm48,24H136a8,8,0,0,0,0,16h40a8,8,0,0,0,0-16Zm56-96V200a16,16,0,0,1-16,16H40a16,16,0,0,1-16-16V56A16,16,0,0,1,40,40H216A16,16,0,0,1,232,56ZM216,200V56H40V200H216Z"></path></svg>
+                </div>
+                <div class="profile-avatar" id="profile-avatar">
+                    <div class="dropdown" id="profile-dropdown">
+                        <div class="dropdown-item" id="user-info">
+                            <i class="ph ph-user"></i>
+                            <span id="username-display">Loading...</span>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <div class="dropdown-item">
+                            <i class="ph ph-gear"></i>
+                            <span>Settings</span>
+                        </div>
+                        <div class="dropdown-item" id="theme-toggle">
+                            <div class="theme-switch">
+                                <div style="display:flex;align-items:center;gap:10px">
+                                    <i class="ph ph-moon"></i>
+                                    <span>Dark Mode</span>
+                                </div>
+                                <div class="switch" id="theme-switch">
+                                    <div class="switch-thumb"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="editor-interface">
+            <div class="sidebar">
+                <div class="search-section">
+                    <div class="search-container">
+                        <i class="ph ph-magnifying-glass"></i>
+                        <input class="search-input" placeholder="Search files..." />
+                    </div>
+                </div>
+
+                <div class="section-header">
+                    <span class="section-title">Explorer</span>
+                    <div class="section-actions">
+                        <i class="ph ph-file-plus"></i>
+                        <i class="ph ph-folder-plus"></i>
+                        <i class="ph ph-arrow-clockwise"></i>
+                    </div>
+                </div>
+
+                <div class="folder-select-btn" id="repo-input-btn">
+                    <i class="ph ph-github-logo"></i>
+                    <span>Load Repository</span>
+                </div>
+                
+                <div class="repo-input" id="repo-input" style="display:none;padding:12px;">
+                    <select id="user-repos" style="width:100%;padding:8px;border:1px solid var(--glass-border);border-radius:4px;background:var(--glass);color:var(--text);margin-bottom:8px;">
+                        <option value="">Select your repository...</option>
+                    </select>
+                    
+                    <div style="text-align:center;margin:8px 0;color:var(--muted);font-size:12px;">OR</div>
+                    
+                    <input type="text" id="repo-url" placeholder="owner/repo or github.com/owner/repo" style="width:100%;padding:8px;border:1px solid var(--glass-border);border-radius:4px;background:var(--glass);color:var(--text);margin-bottom:8px;">
+                    
+                    <div style="display:flex;gap:8px;">
+                        <button id="load-repo" style="flex:1;padding:6px;background:var(--accent);color:white;border:none;border-radius:4px;cursor:pointer;">Load</button>
+                        <button id="cancel-repo" style="padding:6px 12px;background:var(--glass);color:var(--text);border:1px solid var(--glass-border);border-radius:4px;cursor:pointer;">Cancel</button>
+                    </div>
+                </div>
+
+                <div class="file-explorer" id="file-explorer"></div>
+            </div>
+
+            <div class="main-content">
+                <div class="tab-bar">
+                    <div id="tab-container"></div>
+                </div>
+
+                <div class="editor-container">
+                    <div class="editor-main">
+                        <div class="editor-workspace">
+                            <div class="welcome-screen" id="welcome-screen">
+                                <i class="ph ph-code"></i>
+                                <p>Load a GitHub repository to start editing</p>
+                                <p style="font-size:14px;opacity:0.7">Use the "Load Repository" button in the sidebar to get started</p>
+                            </div>
+                            <div class="monaco-editor-container" id="monaco-container" style="display:none"></div>
+                            <div class="image-preview" id="image-preview" style="display:none"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="terminal" id="terminal">
+                    <div class="terminal-resize-handle" id="terminal-resize"></div>
+                    <div class="terminal-tabs">
+                        <div class="terminal-tab active">
+                            <span>Logs</span>
+                        </div>
+                        
+                        <div class="terminal-controls">
+                            <i class="ph ph-caret-up terminal-control" id="terminal-toggle" title="Collapse/Expand"></i>
+                            <i class="ph ph-x terminal-control" id="terminal-close" title="Close Terminal"></i>
+                        </div>
+
+                        <div class="terminal-info">
+                            <span>Ready</span>
+                        </div>
+                    </div>
+
+                    <div class="terminal-content">
+                        <div class="terminal-header">
+                            <i class="ph ph-terminal"></i>
+                            <span id="terminal-path">{path}</span>
+                        </div>
+                        <div class="terminal-output" id="logs-output">
+<span style="color:#10b981">✓</span> SynergySphere Editor initialized
+
+
+<span style="color:#10b981">$</span> <span style="background:rgba(16,185,129,0.1);padding:2px 4px;border-radius:3px">█</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="save-modal">
+        <div class="modal">
+            <div class="modal-title">Confirm File Save</div>
+            <div class="modal-message" id="save-message">Confirm writing/committing changes to <strong id="save-filename"></strong></div>
+            <div class="modal-actions">
+                <button class="modal-btn modal-btn-secondary" id="save-cancel">Cancel</button>
+                <button class="modal-btn modal-btn-primary" id="save-confirm">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="githubManager.js"></script>
+    <script>
+        let monacoEditor = null;
+        let githubManager = null;
+        let openTabs = [];
+        let activeTab = null;
+        
+        require.config({ paths: { vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs' } });
+        
+        function initMonaco() {
+            require(['vs/editor/editor.main'], function () {
+                const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+                
+                monacoEditor = monaco.editor.create(document.getElementById('monaco-container'), {
+                    value: '',
+                    language: 'javascript',
+                    theme: isDark ? 'vs-dark' : 'vs',
+                    automaticLayout: true,
+                    fontSize: 14,
+                    fontFamily: 'JetBrains Mono, Consolas, Monaco, "Courier New", monospace',
+                    minimap: { enabled: false },
+                    scrollBeyondLastLine: false,
+                    wordWrap: 'on',
+                    lineNumbers: 'on',
+                    folding: true,
+                    renderWhitespace: 'selection'
+                });
+                
+                monacoEditor.onDidChangeModelContent(() => {
+                    if (activeTab) {
+                        const tab = openTabs.find(t => t.path === activeTab);
+                        if (tab) {
+                            tab.content = monacoEditor.getValue();
+                            tab.modified = true;
+                            renderTabs();
+                        }
+                    }
+                });
+            });
+        }
+        
+        function updateMonacoTheme() {
+            if (monacoEditor) {
+                const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+                monaco.editor.setTheme(isDark ? 'vs-dark' : 'vs');
+            }
+        }
+        
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('synergy-theme', newTheme);
+            updateMonacoTheme();
+            
+            const themeSwitch = document.getElementById('theme-switch');
+            if (themeSwitch) themeSwitch.classList.toggle('active', newTheme === 'dark');
+        }
+        
+        function getFileLanguage(fileName) {
+            const ext = fileName.split('.').pop().toLowerCase();
+            const langMap = {
+                'js': 'javascript', 'jsx': 'javascript', 'ts': 'typescript', 'tsx': 'typescript',
+                'html': 'html', 'css': 'css', 'scss': 'scss', 'sass': 'sass', 'json': 'json',
+                'md': 'markdown', 'py': 'python', 'java': 'java', 'cpp': 'cpp', 'c': 'c',
+                'cs': 'csharp', 'php': 'php', 'rb': 'ruby', 'go': 'go', 'rs': 'rust',
+                'xml': 'xml', 'yaml': 'yaml', 'yml': 'yaml', 'sql': 'sql', 'sh': 'shell'
+            };
+            return langMap[ext] || 'plaintext';
+        }
+        
+        function isImageFile(fileName) {
+            const ext = fileName.split('.').pop().toLowerCase();
+            return ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'svg', 'webp'].includes(ext);
+        }
+        
+        function renderEditor() {
+            const welcomeScreen = document.getElementById('welcome-screen');
+            const monacoContainer = document.getElementById('monaco-container');
+            const imagePreview = document.getElementById('image-preview');
+            
+            if (!welcomeScreen || !monacoContainer || !imagePreview) return;
+            
+            if (activeTab && monacoEditor) {
+                const tab = openTabs.find(t => t.path === activeTab);
+                if (tab) {
+                    welcomeScreen.style.display = 'none';
+                    
+                    if (isImageFile(tab.name)) {
+                        // Show image preview
+                        monacoContainer.style.display = 'none';
+                        imagePreview.style.display = 'flex';
+                        
+                        const [owner, repo] = githubManager.currentRepo.split('/');
+                        const imageUrl = `https://raw.githubusercontent.com/${owner}/${repo}/${githubManager.defaultBranch}/${tab.path}`;
+                        imagePreview.innerHTML = `<img src="${imageUrl}" alt="${tab.name}" />`;
+                    } else {
+                        // Show code editor
+                        imagePreview.style.display = 'none';
+                        monacoContainer.style.display = 'block';
+                        
+                        const language = getFileLanguage(tab.name);
+                        monaco.editor.setModelLanguage(monacoEditor.getModel(), language);
+                        monacoEditor.setValue(tab.content || '');
+                    }
+                }
+            } else {
+                welcomeScreen.style.display = 'flex';
+                monacoContainer.style.display = 'none';
+                imagePreview.style.display = 'none';
+            }
+        }
+        
+        function renderFileSystem() {
+            const container = document.getElementById('file-explorer');
+            if (!container || !githubManager.fileSystem) return;
+            
+            container.innerHTML = '';
+            
+            const renderItem = (name, item, level = 0) => {
+                const div = document.createElement('div');
+                
+                if (item.type === 'folder') {
+                    div.className = `file-item folder ${item.expanded ? 'expanded' : ''}`;
+                    div.style.paddingLeft = `${12 + level * 16}px`;
+                    
+                    const caretIcon = item.expanded ? 'ph-caret-down' : 'ph-caret-right';
+                    const folderSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#f59e0b" viewBox="0 0 256 256"><path d="M245,110.64A16,16,0,0,0,232,104H216V88a16,16,0,0,0-16-16H130.67L102.94,51.2a16.14,16.14,0,0,0-9.6-3.2H40A16,16,0,0,0,24,64V208h0a8,8,0,0,0,8,8H211.1a8,8,0,0,0,7.59-5.47l28.49-85.47A16.05,16.05,0,0,0,245,110.64ZM93.34,64,123.2,86.4A8,8,0,0,0,128,88h72v16H69.77a16,16,0,0,0-15.18,10.94L40,158.7V64Zm112,136H43.1l26.67-80H232Z"></path></svg>`;
+                    
+                    div.innerHTML = `<i class="ph ${caretIcon} folder-icon" style="color: var(--muted); width: 16px;"></i>${folderSvg}<span>${name}</span>`;
+                    div.onclick = () => toggleFolder(item.path);
+                    container.appendChild(div);
+                    
+                    if (item.expanded && item.children) {
+                        Object.entries(item.children)
+                            .sort(([aName, a], [bName, b]) => {
+                                if (a.type !== b.type) return a.type === 'folder' ? -1 : 1;
+                                return aName.localeCompare(bName);
+                            })
+                            .forEach(([childName, childItem]) => {
+                                renderItem(childName, childItem, level + 1);
+                            });
+                    }
+                } else {
+                    const isActive = activeTab === item.path;
+                    div.className = `file-item ${isActive ? 'active' : ''}`;
+                    div.style.paddingLeft = `${28 + level * 16}px`;
+                    
+                    const fileSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#64748b" viewBox="0 0 256 256"><path d="M213.66,82.34l-56-56A8,8,0,0,0,152,24H56A16,16,0,0,0,40,40V216a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V88A8,8,0,0,0,213.66,82.34ZM160,51.31,188.69,80H160ZM200,216H56V40h88V88a8,8,0,0,0,8,8h48V216Z"></path></svg>`;
+                    
+                    div.innerHTML = `${fileSvg}<span>${name}</span>`;
+                    div.onclick = () => openFile(item.path, item.sha);
+                    container.appendChild(div);
+                }
+            };
+            
+            Object.entries(githubManager.fileSystem)
+                .sort(([aName, a], [bName, b]) => {
+                    if (a.type !== b.type) return a.type === 'folder' ? -1 : 1;
+                    return aName.localeCompare(bName);
+                })
+                .forEach(([name, item]) => renderItem(name, item));
+        }
+        
+        function toggleFolder(path) {
+            const pathParts = path.split('/');
+            let current = githubManager.fileSystem;
+            
+            for (const part of pathParts) {
+                if (current[part]) {
+                    current = current[part];
+                    if (current.type === 'folder' && pathParts.indexOf(part) < pathParts.length - 1) {
+                        current = current.children;
+                    }
+                }
+            }
+            
+            if (current && current.type === 'folder') {
+                current.expanded = !current.expanded;
+                renderFileSystem();
+            }
+        }
+        
+        async function openFile(path, sha) {
+            const fileName = path.split('/').pop();
+            const existingTab = openTabs.find(tab => tab.path === path);
+            
+            if (!existingTab) {
+                const content = await githubManager.loadFileContent(path, sha);
+                openTabs.push({ path, name: fileName, content, modified: false, sha });
+            }
+            
+            activeTab = path;
+            renderTabs();
+            renderEditor();
+        }
+        
+        function renderTabs() {
+            const container = document.getElementById('tab-container');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            openTabs.forEach(tab => {
+                const div = document.createElement('div');
+                div.className = `tab ${activeTab === tab.path ? 'active' : ''}`;
+                
+                const modifiedIndicator = tab.modified ? '●' : '';
+                const tabFileSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="#569cd6" viewBox="0 0 256 256"><path d="M213.66,82.34l-56-56A8,8,0,0,0,152,24H56A16,16,0,0,0,40,40V216a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V88A8,8,0,0,0,213.66,82.34ZM160,51.31,188.69,80H160ZM200,216H56V40h88V88a8,8,0,0,0,8,8h48V216Z"></path></svg>`;
+                
+                div.innerHTML = `${tabFileSvg}<span>${tab.name}${modifiedIndicator}</span><i class="ph ph-x close-tab"></i>`;
+                
+                div.onclick = (e) => {
+                    if (e.target.classList.contains('ph-x')) {
+                        closeTab(tab.path, e);
+                    } else {
+                        activeTab = tab.path;
+                        renderTabs();
+                        renderEditor();
+                    }
+                };
+                
+                container.appendChild(div);
+            });
+        }
+        
+        function closeTab(path, event) {
+            if (event) event.stopPropagation();
+            
+            const tabIndex = openTabs.findIndex(tab => tab.path === path);
+            if (tabIndex >= 0) {
+                openTabs.splice(tabIndex, 1);
+                
+                if (activeTab === path) {
+                    if (openTabs.length > 0) {
+                        const newIndex = tabIndex < openTabs.length ? tabIndex : openTabs.length - 1;
+                        activeTab = openTabs[newIndex].path;
+                    } else {
+                        activeTab = null;
+                    }
+                }
+            }
+            
+            renderTabs();
+            renderEditor();
+        }
+        
+        function logToTerminal(message, type = 'info') {
+            const output = document.getElementById('logs-output');
+            if (output && !output.innerHTML.includes('Recent Commits:')) {
+                const color = type === 'error' ? '#ef4444' : type === 'warning' ? '#f59e0b' : '#10b981';
+                const icon = type === 'error' ? '✗' : type === 'warning' ? '⚠' : '✓';
+                output.innerHTML += `\n<span style="color:${color}">${icon}</span> ${message}`;
+                output.scrollTop = output.scrollHeight;
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('synergy-theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            
+            initMonaco();
+            githubManager = new GitHubManager();
+            
+            githubManager.loadFromStorage().then(loaded => {
+                if (loaded) {
+                    renderFileSystem();
+                    populateUserRepos();
+                    updateUserProfile();
+                }
+            });
+            
+            // GitHub repo input handlers
+            document.getElementById('repo-input-btn').addEventListener('click', () => {
+                const input = document.getElementById('repo-input');
+                input.style.display = input.style.display === 'none' ? 'block' : 'none';
+                populateUserRepos();
+            });
+            
+            document.getElementById('user-repos').addEventListener('change', async (e) => {
+                if (e.target.value) {
+                    const success = await githubManager.fetchRepo(e.target.value);
+                    if (success) {
+                        renderFileSystem();
+                        document.getElementById('repo-input').style.display = 'none';
+                        e.target.value = '';
+                    }
+                }
+            });
+            
+            document.getElementById('load-repo').addEventListener('click', async () => {
+                const url = document.getElementById('repo-url').value.trim();
+                if (url) {
+                    const success = await githubManager.fetchRepo(url);
+                    if (success) {
+                        renderFileSystem();
+                        document.getElementById('repo-input').style.display = 'none';
+                        document.getElementById('repo-url').value = '';
+                    }
+                }
+            });
+            
+            document.getElementById('cancel-repo').addEventListener('click', () => {
+                document.getElementById('repo-input').style.display = 'none';
+                document.getElementById('repo-url').value = '';
+                document.getElementById('user-repos').value = '';
+            });
+            
+            // Theme toggle
+            const profileAvatar = document.getElementById('profile-avatar');
+            const dropdown = document.getElementById('profile-dropdown');
+            
+            if (profileAvatar && dropdown) {
+                profileAvatar.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const isVisible = dropdown.classList.contains('show');
+                    dropdown.classList.toggle('show');
+                });
+                
+                dropdown.addEventListener('click', (e) => {
+                    e.stopPropagation();  // Add this to prevent immediate closing
+                });
+                
+                document.addEventListener('click', (e) => {
+                    if (!dropdown.contains(e.target) && !profileAvatar.contains(e.target)) {
+                        dropdown.classList.remove('show');
+                    }
+                });
+            }
+
+            document.getElementById('theme-toggle').addEventListener('click', (e) => {
+                e.stopPropagation();
+                toggleTheme();
+            });
+            
+            const themeSwitch = document.getElementById('theme-switch');
+            if (themeSwitch) themeSwitch.classList.toggle('active', savedTheme === 'dark');
+            
+            // Terminal controls
+            const terminal = document.getElementById('terminal');
+            const terminalToggle = document.getElementById('terminal-toggle');
+            const terminalClose = document.getElementById('terminal-close');
+            const resizeHandle = document.getElementById('terminal-resize');
+            
+            let isCollapsed = false;
+            let isResizing = false;
+            let startY = 0;
+            let startHeight = 0;
+            
+            terminalToggle.addEventListener('click', () => {
+                isCollapsed = !isCollapsed;
+                terminal.querySelector('.terminal-content').style.display = isCollapsed ? 'none' : 'block';
+                terminalToggle.className = isCollapsed ? 'ph ph-caret-down terminal-control' : 'ph ph-caret-up terminal-control';
+            });
+            
+            terminalClose.addEventListener('click', () => {
+                terminal.style.display = 'none';
+            });
+            
+            resizeHandle.addEventListener('mousedown', (e) => {
+                isResizing = true;
+                startY = e.clientY;
+                startHeight = parseInt(document.defaultView.getComputedStyle(terminal).height, 10);
+                document.addEventListener('mousemove', handleResize);
+                document.addEventListener('mouseup', stopResize);
+                e.preventDefault();
+            });
+            
+            function handleResize(e) {
+                if (!isResizing) return;
+                const dy = startY - e.clientY;
+                const newHeight = Math.max(100, Math.min(600, startHeight + dy));
+                terminal.style.height = newHeight + 'px';
+            }
+            
+            function stopResize() {
+                isResizing = false;
+                document.removeEventListener('mousemove', handleResize);
+                document.removeEventListener('mouseup', stopResize);
+            }
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', async (e) => {
+                if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                    e.preventDefault();
+                    if (activeTab) {
+                        const tab = openTabs.find(t => t.path === activeTab);
+                        if (tab && tab.modified) {
+                            const message = prompt('Commit message:', `Update ${tab.name}`);
+                            if (message) {
+                                const success = await githubManager.commitFile(tab.path, tab.content, message);
+                                if (success) {
+                                    tab.modified = false;
+                                    renderTabs();
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            window.logToTerminal = logToTerminal;
+            window.renderEditor = renderEditor;
+            window.renderFileSystem = renderFileSystem;
+        });
+        
+        function populateUserRepos() {
+            const select = document.getElementById('user-repos');
+            select.innerHTML = '<option value="">Select your repository...</option>';
+            
+            githubManager.userRepos.forEach(repo => {
+                const option = document.createElement('option');
+                option.value = repo.full_name;
+                option.textContent = `${repo.name} ${repo.private ? '(Private)' : ''}`;
+                select.appendChild(option);
+            });
+        }
+        
+        function updateUserProfile() {
+            if (githubManager.user) {
+                const profileAvatar = document.getElementById('profile-avatar');
+                const usernameDisplay = document.getElementById('username-display');
+                
+                // Update avatar with GitHub profile picture
+                if (githubManager.user.avatar_url) {
+                    // Create avatar image element
+                    const existingImg = profileAvatar.querySelector('img');
+                    if (!existingImg) {
+                        const img = document.createElement('img');
+                        img.src = githubManager.user.avatar_url;
+                        img.alt = githubManager.user.login;
+                        profileAvatar.insertBefore(img, profileAvatar.firstChild);
+                    } else {
+                        existingImg.src = githubManager.user.avatar_url;
+                        existingImg.alt = githubManager.user.login;
+                    }
+                }
+                
+                // Update username display
+                if (usernameDisplay) {
+                    usernameDisplay.textContent = githubManager.user.login;
+                }
+            }
+        }
+    </script>
+</body>
+</html>
